@@ -15,6 +15,7 @@
         Internalize="true"
         InputAssemblies="@(InputAssemblies)"
         TargetKind="SameAsPrimaryAssembly"
-        OutputFile="$(TargetPath)"/>
+        OutputFile="$(TargetPath)"
+        LibraryPath="$(OutputPath)"/>
   </Target>
 </Project>
