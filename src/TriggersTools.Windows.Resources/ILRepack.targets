@@ -3,6 +3,8 @@
   <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <!-- Internal Assemblies -->
     <ItemGroup>
+      <!-- Set the original assembly to be patched -->
+      <InputAssemblies Include="$(TargetPath)" />
       <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(FileName)' == 'TriggersTools.SharpUtils'" />
     </ItemGroup>
 
