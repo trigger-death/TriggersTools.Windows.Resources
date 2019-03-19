@@ -9,10 +9,10 @@
     <!-- ILRepack.Lib.MSBuild.Task -->
     <ILRepack
         Parallel="true"
-			  DebugInfo="true"
+        DebugInfo="true"
         Internalize="true"
         InputAssemblies="@(InputAssemblies)"
-			  TargetKind="SameAsPrimaryAssembly"
+        TargetKind="SameAsPrimaryAssembly"
         OutputFile="$(TargetPath)"/>
   </Target>
 </Project>
