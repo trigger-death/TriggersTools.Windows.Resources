@@ -22,9 +22,6 @@ branches:
   only:
     - master
 
-before_build:
-- nuget restore
-
 init:
 - ps: >-
     $env:runNugetDeploy  = "false";
@@ -51,6 +48,9 @@ init:
       $env:packageVersion  = "$env:baseVersion-test-$env:appveyor_build_number";
     }
     Update-AppveyorBuild -Version $env:buildVersion;
+
+before_build:
+- nuget restore
 
 artifacts:
 - path: '**\*.nupkg'
