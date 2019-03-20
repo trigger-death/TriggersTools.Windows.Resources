@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-    <!-- Internal Assemblies -->
     <ItemGroup>
       <!-- Set the original assembly to be patched -->
       <InputAssemblies Include="$(TargetPath)" />
+
+      <!-- Set the assemblies that will be packed -->
       <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(FileName)' == 'TriggersTools.SharpUtils'" />
+
+      <!-- Set the assemblies that will be copied and referenced -->
+      <CopyAssemblies Include="@(ReferencePathWithRefAssemblies)" Exclude="@(InputAssemblies)" />
     </ItemGroup>
+
+    <!-- Make sure all referenced assemblies are in the output path so they can be referenced -->
+    <Copy SourceFiles="@(CopyAssemblies)" DestinationFolder="$(OutputPath)" />
 
     <!-- ILRepack.Lib.MSBuild.Task -->
     <ILRepack
         Parallel="true"
-        DebugInfo="true"
+			  DebugInfo="true"
         Internalize="true"
         InputAssemblies="@(InputAssemblies)"
-        TargetKind="SameAsPrimaryAssembly"
+			  TargetKind="SameAsPrimaryAssembly"
         OutputFile="$(TargetPath)"
         LibraryPath="$(OutputPath)"/>
   </Target>
