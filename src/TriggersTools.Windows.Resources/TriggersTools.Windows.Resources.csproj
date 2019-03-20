@@ -35,7 +35,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.16.1" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.16.1">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="TriggersTools.SharpUtils" Version="1.0.1-build-44">
       <PrivateAssets>all</PrivateAssets>
