@@ -4,12 +4,12 @@
     <TargetFrameworks>net451;net46;netstandard2.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageId>TriggersTools.Windows.Resources</PackageId>
+    <PackageId>TriggersTools.Windows.Resources.Core</PackageId>
     <Authors>Robert Jordan</Authors>
     <Company>Trigger's Tools &amp; Games</Company>
-    <Product>TriggersTools.Windows.Resources</Product>
+    <Product>TriggersTools.Windows.Resources.Core</Product>
     <Copyright>Copyright © Robert Jordan $([System.DateTime]::Now.Year)</Copyright>
-    <Description>A library for working with and modifying Windows module resources.</Description>
+    <Description>The base library for working with windows resources without built in types.</Description>
     <PackageProjectUrl>https://github.com/trigger-death/TriggersTools.Windows.Resources</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggersTools.Windows.Resources/blob/master/License.md</PackageLicenseUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/trigger-death/TriggersTools.Windows.Resources/master/NuGetIcon.png</PackageIconUrl>
@@ -18,6 +18,7 @@
     <PackageTags>windows resources</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <RootNamespace>TriggersTools.Windows.Resources</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -33,22 +34,4 @@
     <WarningLevel>2</WarningLevel>
     <NoWarn>1701;1702;1570;1572;1574;1734;NU5125</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="ResourceInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.16.1">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="TriggersTools.SharpUtils" Version="1.0.1-build-45">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TriggersTools.Windows.Resources.Core\TriggersTools.Windows.Resources.Core.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -27,11 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using TriggersTools.Windows.Resources.Dialog;
-using TriggersTools.Windows.Resources.Manifest;
-using TriggersTools.Windows.Resources.Menu;
 using TriggersTools.Windows.Resources.Native;
-using TriggersTools.Windows.Resources.StringTable;
 using TriggersTools.SharpUtils.Exceptions;
 
 namespace TriggersTools.Windows.Resources {
@@ -40,8 +36,14 @@ namespace TriggersTools.Windows.Resources {
 	///     Resource info manager.
 	/// </summary>
 	public class ResourceInfo : IEnumerable<Resource>, IDisposable {
+		#region Constants
+
+		private static readonly ResourceLoadSettings DefaultSettings = new ResourceLoadSettings();
+
+		#endregion
+
 		#region Fields
-		
+
 		/// <summary>
 		///  The inner exception thrown during native resource enumeration.<para/>
 		///  This exists because exceptions cannot be caught through these calls.
@@ -53,6 +55,8 @@ namespace TriggersTools.Windows.Resources {
 		/// </summary>
 		private readonly Dictionary<ResourceId, ResourceCollection> resourceLists
 			= new Dictionary<ResourceId, ResourceCollection>();
+
+		private readonly ResourceLoadSettings settings;
 		//public Dictionary<ResourceId, ResourceCollection> resourceLists { get; }
 		//	= new Dictionary<ResourceId, ResourceCollection>();
 
@@ -64,12 +68,26 @@ namespace TriggersTools.Windows.Resources {
 		public ResourceInfo(string fileName, bool loadResources = true) {
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
+			settings = DefaultSettings;
 			Load(fileName, loadResources);
 		}
 		public ResourceInfo(IntPtr hModule, bool loadResources = true) {
 			if (hModule == IntPtr.Zero)
 				throw new ArgumentNullException(nameof(hModule));
+			settings = DefaultSettings;
 			Load(hModule, loadResources);
+		}
+		public ResourceInfo(string fileName, ResourceLoadSettings settings) {
+			if (fileName == null)
+				throw new ArgumentNullException(nameof(fileName));
+			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+			Load(fileName, true);
+		}
+		public ResourceInfo(IntPtr hModule, ResourceLoadSettings settings) {
+			if (hModule == IntPtr.Zero)
+				throw new ArgumentNullException(nameof(hModule));
+			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+			Load(hModule, true);
 		}
 
 		#endregion
@@ -238,33 +256,10 @@ namespace TriggersTools.Windows.Resources {
 		/// <param name="size">Size of resource.</param>
 		/// <returns>A specialized or a generic resource.</returns>
 		protected Resource CreateResource(IntPtr hModule, ResourceId type, ResourceId name, ushort language) {
-			if (type.IsIntResource) {
-				switch (type.ResourceType) {
-				/*case Resources.ResourceTypes.RT_VERSION:
-					return new VersionResource(hModule, name, language);
-				case Resources.ResourceTypes.RT_GROUP_CURSOR:
-					return new CursorDirectoryResource(hModule, name, language);
-				case Resources.ResourceTypes.RT_GROUP_ICON:
-					return new IconDirectoryResource(hModule, name, language);*/
-				case Resources.ResourceTypes.Manifest:
-					return new ManifestResource(hModule, name, language);
-				/*case Resources.ResourceTypes.RT_BITMAP:
-					return new BitmapResource(hModule, hResourceGlobal, type, name, wIDLanguage, size);*/
-				case Resources.ResourceTypes.Menu:
-					return new MenuResource(hModule, name, language);
-				case Resources.ResourceTypes.Dialog:
-					return new DialogResource(hModule, name, language);
-				case Resources.ResourceTypes.String:
-					return new StringResource(hModule, name, language);
-				/*case Resources.ResourceTypes.RT_FONTDIR:
-					return new FontDirectoryResource(hModule, name, language);
-				case Resources.ResourceTypes.RT_FONT:
-					return new FontResource(hModule, name, language);
-				case Resources.ResourceTypes.RT_ACCELERATOR:
-					return new AcceleratorResource(hModule, name, language);*/
-				}
+			// Check if we have a resource registered for this type.
+			if (settings.TypeBuilders.TryGetValue(type, out var createResource)) {
+				return createResource(hModule, type, name, language);
 			}
-
 			return new GenericResource(hModule, type, name, language);
 		}
 
