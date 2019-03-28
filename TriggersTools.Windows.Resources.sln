@@ -5,7 +5,13 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggersTools.Windows.Resources", "src\TriggersTools.Windows.Resources\TriggersTools.Windows.Resources.csproj", "{B83D38E6-BB02-49AB-9E9E-CC57518FB82E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriggersTools.Windows.Resources.Core", "src\TriggersTools.Windows.Resources.Core\TriggersTools.Windows.Resources.Core.csproj", "{90BA963B-9E60-4B5B-95CF-154DC7902D16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggersTools.Windows.Resources.Core", "src\TriggersTools.Windows.Resources.Core\TriggersTools.Windows.Resources.Core.csproj", "{90BA963B-9E60-4B5B-95CF-154DC7902D16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResTesting", "samples\ResTesting\ResTesting.csproj", "{650F8168-9B9C-474B-B386-9FADD66D7ED8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6B526CC9-3CF5-46E3-84C4-4F9044B6B7A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{26AB2C79-573F-4908-8070-9FF6FA9F209A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +27,18 @@ Global
 		{90BA963B-9E60-4B5B-95CF-154DC7902D16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90BA963B-9E60-4B5B-95CF-154DC7902D16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90BA963B-9E60-4B5B-95CF-154DC7902D16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{650F8168-9B9C-474B-B386-9FADD66D7ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{650F8168-9B9C-474B-B386-9FADD66D7ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{650F8168-9B9C-474B-B386-9FADD66D7ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{650F8168-9B9C-474B-B386-9FADD66D7ED8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B83D38E6-BB02-49AB-9E9E-CC57518FB82E} = {6B526CC9-3CF5-46E3-84C4-4F9044B6B7A4}
+		{90BA963B-9E60-4B5B-95CF-154DC7902D16} = {6B526CC9-3CF5-46E3-84C4-4F9044B6B7A4}
+		{650F8168-9B9C-474B-B386-9FADD66D7ED8} = {26AB2C79-573F-4908-8070-9FF6FA9F209A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB8AB63F-5E74-4E87-B08B-9A8D041C8B1B}

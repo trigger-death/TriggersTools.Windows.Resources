@@ -17,7 +17,7 @@ namespace TriggersTools.Windows.Resources.Manifest {
 		private XmlDocument doc = new XmlDocument();
 
 		#endregion
-		
+
 		#region Constructors
 
 		public ManifestResource(ushort language)
@@ -34,12 +34,12 @@ namespace TriggersTools.Windows.Resources.Manifest {
 			doc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
 						"<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\" />");
 		}
-		public ManifestResource(string fileName, ManifestType manifestType, ushort language)
-			: this(fileName, (ushort) manifestType, language)
+		public ManifestResource(string filePath, ManifestType manifestType, ushort language)
+			: this(filePath, (ushort) manifestType, language)
 		{
 		}
-		public ManifestResource(string fileName, ResourceId name, ushort language)
-			: base(fileName, ResourceTypes.Manifest, name, language)
+		public ManifestResource(string filePath, ResourceId name, ushort language)
+			: base(filePath, ResourceTypes.Manifest, name, language)
 		{
 		}
 		public ManifestResource(IntPtr hModule, ManifestType manifestType, ushort language)
@@ -50,7 +50,7 @@ namespace TriggersTools.Windows.Resources.Manifest {
 			: base(hModule, ResourceTypes.Manifest, name, language)
 		{
 		}
-		
+
 		#endregion
 
 		#region Properties

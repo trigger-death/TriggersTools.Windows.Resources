@@ -34,9 +34,9 @@ namespace TriggersTools.Windows.Resources {
 		#region Constants
 
 		/// <summary>
-		///  Gets a null resource Id.
+		///  Gets the null resource Id.
 		/// </summary>
-		public static readonly ResourceId Null = new ResourceId();
+		public static ResourceId Null => new ResourceId();
 
 		#endregion
 

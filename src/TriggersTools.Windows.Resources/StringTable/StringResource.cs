@@ -35,13 +35,12 @@ namespace TriggersTools.Windows.Resources.StringTable {
 
 		#region Constructors
 
-		//public StringResource() : base(ResourceTypes.RT_STRING) { }
 		public StringResource(ResourceId name, ushort language)
 			: base(ResourceTypes.String, name, language)
 		{
 		}
-		public StringResource(string fileName, ResourceId name, ushort language)
-			: base(fileName, ResourceTypes.String, name, language)
+		public StringResource(string filePath, ResourceId name, ushort language)
+			: base(filePath, ResourceTypes.String, name, language)
 		{
 		}
 		public StringResource(IntPtr hModule, ResourceId name, ushort language)

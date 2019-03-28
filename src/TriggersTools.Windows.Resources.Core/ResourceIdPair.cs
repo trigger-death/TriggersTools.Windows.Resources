@@ -19,10 +19,14 @@ namespace TriggersTools.Windows.Resources {
 		///  Gets or sets the resource language Id.
 		/// </summary>
 		public ushort Language { get; set; }
+		/*/// <summary>
+		///  Gets or sets if the resource type Id is ignored during comparison.
+		/// </summary>
+		public bool IgnoreType { get; set; }
 		/// <summary>
 		///  Gets or sets if the resource language Id is ignored during comparison.
 		/// </summary>
-		public bool IgnoreLanguage { get; set; }
+		public bool IgnoreLanguage { get; set; }*/
 
 		#endregion
 
@@ -32,17 +36,32 @@ namespace TriggersTools.Windows.Resources {
 		///  Constructs a resource Id pair from the existing resource.
 		/// </summary>
 		/// <param name="resource">The existing resource to get the Ids from.</param>
-		public ResourceIdPair(Resource resource) : this(resource, false) { }
+		public ResourceIdPair(Resource resource) : this(resource.Type, resource.Name, resource.Language) { }
+		/*public ResourceIdPair(Resource resource) : this(resource, false, false) { }
 		/// <summary>
 		///  Constructs a resource Id pair from the existing resource.
 		/// </summary>
 		/// <param name="resource">The existing resource to get the Ids from.</param>
+		/// <param name="ignoreType">True if the type should be ignored during comparison.</param>
 		/// <param name="ignoreLanguage">True if langauge should be ignored during comparison.</param>
-		public ResourceIdPair(Resource resource, bool ignoreLanguage) {
+		public ResourceIdPair(Resource resource, bool ignoreType, bool ignoreLanguage) {
 			Type = resource.Type;
 			Name = resource.Name;
 			Language = resource.Language;
-			IgnoreLanguage = ignoreLanguage;
+			//IgnoreType = ignoreType;
+			//IgnoreLanguage = ignoreLanguage;
+		}
+		/// <summary>
+		///  Constructs a resource Id pair with just a name and ignores the type and langauge.
+		/// </summary>
+		/// <param name="name">The resource name.</param>
+		/// <param name="language">The resource language.</param>
+		public ResourceIdPair(ResourceId name) {
+			Type = ResourceId.Null;
+			Name = name;
+			Language = 0;
+			//IgnoreType = true;
+			//IgnoreLanguage = true;
 		}
 		/// <summary>
 		///  Constructs a resource Id pair with just a type and name and ignores the language.
@@ -53,10 +72,23 @@ namespace TriggersTools.Windows.Resources {
 			Type = type;
 			Name = name;
 			Language = 0;
+			IgnoreType = false;
 			IgnoreLanguage = true;
 		}
 		/// <summary>
-		///  Constructs a resource Id pair with just a type, name and language.
+		///  Constructs a resource Id pair with just a name and language and ignores the type.
+		/// </summary>
+		/// <param name="name">The resource name.</param>
+		/// <param name="language">The resource language.</param>
+		public ResourceIdPair(ResourceId name, ushort language) {
+			Type = ResourceId.Null;
+			Name = name;
+			Language = language;
+			IgnoreType = true;
+			IgnoreLanguage = false;
+		}*/
+		/// <summary>
+		///  Constructs a resource Id pair with type, name, and language.
 		/// </summary>
 		/// <param name="type">The resource type.</param>
 		/// <param name="name">The resource name.</param>
@@ -65,7 +97,8 @@ namespace TriggersTools.Windows.Resources {
 			Type = type;
 			Name = name;
 			Language = language;
-			IgnoreLanguage = false;
+			//IgnoreType = false;
+			//IgnoreLanguage = false;
 		}
 
 		#endregion
@@ -86,10 +119,11 @@ namespace TriggersTools.Windows.Resources {
 		/// </summary>
 		/// <returns>The resource Id pair names.</returns>
 		public override string ToString() {
-			if (IgnoreLanguage)
-				return $"{TypeName} : {Name} : <any>";
-			else
-				return $"{TypeName} : {Name} : {Language}";
+			/*const string Any = "<any>";
+			string type = (IgnoreType ? Any : TypeName);
+			string lang = (IgnoreLanguage ? Any : $"0x{Language:X4}");
+			return $"{type} : {Name} : {lang}";*/
+			return $"{TypeName} : {Name} : 0x{Language:X4}";
 		}
 
 		/// <summary>
@@ -97,10 +131,13 @@ namespace TriggersTools.Windows.Resources {
 		/// </summary>
 		/// <returns>The resource Id pair hash code.</returns>
 		public override int GetHashCode() {
-			if (IgnoreLanguage)
-				return Type.GetHashCode() ^ Name.GetHashCode();
-			else
-				return Type.GetHashCode() ^ Name.GetHashCode() ^ (Language << 16);
+			return Type.GetHashCode() ^ Name.GetHashCode() ^ (Language << 16);
+			/*int hashCode = Name.GetHashCode();
+			if (!IgnoreType)
+				hashCode ^= Type.GetHashCode();
+			if (!IgnoreLanguage)
+				hashCode ^= (Language << 16);
+			return hashCode;*/
 		}
 
 		/// <summary>
@@ -109,7 +146,7 @@ namespace TriggersTools.Windows.Resources {
 		/// <param name="obj">The object to compare.</param>
 		/// <returns>True if both resource Id pairs represent the same resource.</returns>
 		public override bool Equals(object obj) {
-			return (obj is ResourceIdPair resIdPair && Equals(resIdPair));
+			return (obj is ResourceIdPair idPair && Equals(idPair));
 		}
 		/// <summary>
 		///  Checks if the other resource Id pair is equal to this one.
@@ -117,8 +154,10 @@ namespace TriggersTools.Windows.Resources {
 		/// <param name="other">The other resource Id pair to compare.</param>
 		/// <returns>True if both resource Id pairs represent the same resource.</returns>
 		public bool Equals(ResourceIdPair other) {
-			return	(Type == other.Type && other.Name == other.Name &&
-					(IgnoreLanguage || other.IgnoreLanguage || Language == other.Language));
+			return (Type == other.Type && Name == other.Name && Language == other.Language);
+			/*return ((Type     == other.Type     || IgnoreType     || other.IgnoreType) &&
+					(Name     == other.Name) &&
+					(Language == other.Language || IgnoreLanguage || other.IgnoreLanguage));*/
 		}
 		/// <summary>
 		///  Checks if the other object is a resource Id pair and compares this resource Id pair to it.
@@ -130,8 +169,8 @@ namespace TriggersTools.Windows.Resources {
 		///  <paramref name="obj"/> is not a <see cref="ResourceIdPair"/>.
 		/// </exception>
 		public int CompareTo(object obj) {
-			if (obj is ResourceIdPair resIdPair)
-				return CompareTo(resIdPair);
+			if (obj is ResourceIdPair idPair)
+				return CompareTo(idPair);
 			throw new ArgumentException($"{nameof(obj)} is not of type {nameof(ResourceIdPair)}!");
 		}
 		/// <summary>
@@ -140,15 +179,17 @@ namespace TriggersTools.Windows.Resources {
 		/// <param name="obj">The object to compare.</param>
 		/// <returns>The comparison of this resource Id pair to the other.</returns>
 		public int CompareTo(ResourceIdPair other) {
-			int comparison = Type.CompareTo(other.Type);
-			if (comparison != 0)
+			int comparison;
+			//if (!IgnoreType && !other.IgnoreType && (comparison = Type.CompareTo(other.Type)) != 0)
+			//	return comparison;
+			if ((comparison = Type.CompareTo(other.Type)) != 0)
 				return comparison;
-			comparison = Name.CompareTo(other.Name);
-			if (comparison != 0)
+			if ((comparison = Name.CompareTo(other.Name)) != 0)
 				return comparison;
-			if (IgnoreLanguage || other.IgnoreLanguage)
-				return 0;
 			return Language.CompareTo(other.Language);
+			/*if (!IgnoreLanguage && !other.IgnoreLanguage)
+				return Language.CompareTo(other.Language);
+			return 0;*/
 		}
 
 		#endregion

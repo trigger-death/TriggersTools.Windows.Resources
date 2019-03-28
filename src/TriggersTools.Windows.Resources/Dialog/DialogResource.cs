@@ -44,13 +44,12 @@ namespace TriggersTools.Windows.Resources.Dialog {
 
 		#region Constructors
 
-		//public DialogResource() : base(ResourceTypes.RT_DIALOG) { }
 		public DialogResource(ResourceId name, ushort language)
 			: base(ResourceTypes.Dialog, name, language)
 		{
 		}
-		public DialogResource(string fileName, ResourceId name, ushort language)
-			: base(fileName, ResourceTypes.Dialog, name, language)
+		public DialogResource(string filePath, ResourceId name, ushort language)
+			: base(filePath, ResourceTypes.Dialog, name, language)
 		{
 		}
 		public DialogResource(IntPtr hModule, ResourceId name, ushort language)

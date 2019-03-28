@@ -19,15 +19,14 @@ namespace TriggersTools.Windows.Resources.Menu {
 		#endregion
 
 		#region Constructors
-		
-		//public MenuResource() : base(ResourceTypes.RT_MENU) { }
+
 		public MenuResource(ResourceId name, ushort language)
 			: base(ResourceTypes.Menu, name, language)
 		{
 			Template = new MenuTemplate();
 		}
-		public MenuResource(string fileName, ResourceId name, ushort language)
-			: base(fileName, ResourceTypes.Menu, name, language)
+		public MenuResource(string filePath, ResourceId name, ushort language)
+			: base(filePath, ResourceTypes.Menu, name, language)
 		{
 		}
 		public MenuResource(IntPtr hModule, ResourceId name, ushort language)

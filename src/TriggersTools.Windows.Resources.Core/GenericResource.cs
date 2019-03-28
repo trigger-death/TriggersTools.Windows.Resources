@@ -13,21 +13,51 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  The raw resource data.
 		/// </summary>
-		private byte[] data;
+		private byte[] data = new byte[0];
 
 		#endregion
 
 		#region Constructors
-
-		//public GenericResource(ResourceId type) : base(type) { }
+		
+		/// <summary>
+		///  Constructs a generic resource of the specified type, name, and language.
+		/// </summary>
+		/// <param name="type">The resource type.</param>
+		/// <param name="name">The resource name.</param>
+		/// <param name="language">The resource language.</param>
 		public GenericResource(ResourceId type, ResourceId name, ushort language)
 			: base(type, name, language)
 		{
 		}
-		public GenericResource(string fileName, ResourceId type, ResourceId name, ushort language)
-			: base(fileName, type, name, language)
+		/// <summary>
+		///  Constructs and loads a generic resource of the specified type, name, and language.
+		/// </summary>
+		/// <param name="filePath">The module file to load the resource from.</param>
+		/// <param name="type">The resource type.</param>
+		/// <param name="name">The resource name.</param>
+		/// <param name="language">The resource language.</param>
+		/// 
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
+		/// </exception>
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public GenericResource(string filePath, ResourceId type, ResourceId name, ushort language)
+			: base(filePath, type, name, language)
 		{
 		}
+		/// <summary>
+		///  Constructs and loads a generic resource of the specified type, name, and language.
+		/// </summary>
+		/// <param name="hModule">The module pointer to load the resource from.</param>
+		/// <param name="type">The resource type.</param>
+		/// <param name="name">The resource name.</param>
+		/// <param name="language">The resource language.</param>
+		/// 
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
 		public GenericResource(IntPtr hModule, ResourceId type, ResourceId name, ushort language)
 			: base(hModule, type, name, language)
 		{

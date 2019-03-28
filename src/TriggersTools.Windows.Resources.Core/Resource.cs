@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using TriggersTools.Windows.Resources.Native;
 
 namespace TriggersTools.Windows.Resources {
@@ -53,14 +52,7 @@ namespace TriggersTools.Windows.Resources {
 		#endregion
 
 		#region Constructors
-
-		/*/// <summary>
-		///  Constructs a resource of the specified type.
-		/// </summary>
-		/// <param name="type">The resource type.</param>
-		public Resource(ResourceId type) {
-			Type = type;
-		}*/
+		
 		/// <summary>
 		///  Constructs a resource of the specified type, name, and language.
 		/// </summary>
@@ -75,22 +67,33 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Constructs and loads a resource of the specified type, name, and language.
 		/// </summary>
-		/// <param name="fileName">The module file to load the resource from.</param>
+		/// <param name="filePath">The module file to load the resource from.</param>
 		/// <param name="type">The resource type.</param>
 		/// <param name="name">The resource name.</param>
 		/// <param name="language">The resource language.</param>
-		protected Resource(string fileName, ResourceId type, ResourceId name, ushort language)
+		/// 
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
+		/// </exception>
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		protected Resource(string filePath, ResourceId type, ResourceId name, ushort language)
 			: this(type, name, language)
 		{
-			LoadFrom(fileName);
+			LoadFrom(filePath);
 		}
 		/// <summary>
 		///  Constructs and loads a resource of the specified type, name, and language.
 		/// </summary>
-		/// <param name="fileName">The module pointer to load the resource from.</param>
+		/// <param name="hModule">The module pointer to load the resource from.</param>
 		/// <param name="type">The resource type.</param>
 		/// <param name="name">The resource name.</param>
 		/// <param name="language">The resource language.</param>
+		/// 
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
 		protected Resource(IntPtr hModule, ResourceId type, ResourceId name, ushort language)
 			: this(type, name, language)
 		{
@@ -155,8 +158,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public void SaveTo(IntPtr hUpdate) {
 			Update(hUpdate, false);
@@ -164,16 +167,19 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Saves the resource to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> is null.
+		///  <paramref name="filePath"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public void SaveTo(string fileName) {
-			Update(fileName, false);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public void SaveTo(string filePath) {
+			Update(filePath, false);
 		}
 		/// <summary>
 		///  Saves all resources to the update handle of the module.
@@ -184,8 +190,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public static void SaveTo(IntPtr hUpdate, params Resource[] resources) {
 			Update(hUpdate, false, resources);
@@ -199,8 +205,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public static void SaveTo(IntPtr hUpdate, IEnumerable<Resource> resources) {
 			Update(hUpdate, false, resources);
@@ -208,32 +214,38 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Saves all resources to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="resources">The resources to save.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> or <paramref name="resources"/> is null.
+		///  <paramref name="filePath"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public static void SaveTo(string fileName, params Resource[] resources) {
-			Update(fileName, false, resources);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public static void SaveTo(string filePath, params Resource[] resources) {
+			Update(filePath, false, resources);
 		}
 		/// <summary>
 		///  Saves all resources to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="resources">The resources to save.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> or <paramref name="resources"/> is null.
+		///  <paramref name="filePath"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public static void SaveTo(string fileName, IEnumerable<Resource> resources) {
-			Update(fileName, false, resources);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public static void SaveTo(string filePath, IEnumerable<Resource> resources) {
+			Update(filePath, false, resources);
 		}
 
 		#endregion
@@ -248,8 +260,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public void DeleteFrom(IntPtr hUpdate) {
 			Update(hUpdate, true);
@@ -257,16 +269,19 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Saves the resource to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> is null.
+		///  <paramref name="filePath"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public void DeleteFrom(string fileName) {
-			Update(fileName, true);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public void DeleteFrom(string filePath) {
+			Update(filePath, true);
 		}
 		/// <summary>
 		///  Deletes all resources from the update handle of the module.
@@ -277,8 +292,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public static void DeleteFrom(IntPtr hUpdate, params Resource[] resources) {
 			Update(hUpdate, true, resources);
@@ -292,8 +307,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		public static void DeleteFrom(IntPtr hUpdate, IEnumerable<Resource> resources) {
 			Update(hUpdate, true, resources);
@@ -301,32 +316,38 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Deletes all resources from the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="resources">The resources to delete.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> or <paramref name="resources"/> is null.
+		///  <paramref name="filePath"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public static void DeleteFrom(string fileName, params Resource[] resources) {
-			Update(fileName, true, resources);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public static void DeleteFrom(string filePath, params Resource[] resources) {
+			Update(filePath, true, resources);
 		}
 		/// <summary>
 		///  Deletes all resources from the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="resources">The resources to delete.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> or <paramref name="resources"/> is null.
+		///  <paramref name="filePath"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		public static void DeleteFrom(string fileName, IEnumerable<Resource> resources) {
-			Update(fileName, true, resources);
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		public static void DeleteFrom(string filePath, IEnumerable<Resource> resources) {
+			Update(filePath, true, resources);
 		}
 
 		#endregion
@@ -363,24 +384,31 @@ namespace TriggersTools.Windows.Resources {
 		#region LoadFrom
 
 		/// <summary>
-		///     Load a resource from an executable (.exe or .dll) file.
+		///  Load a resource from an executable (.exe or .dll) file.
 		/// </summary>
-		/// <param name="fileName">An executable (.exe or .dll) file.</param>
-		private void LoadFrom(string fileName) {
-			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
+		/// <param name="filePath">An executable (.exe or .dll) file.</param>
+		private void LoadFrom(string filePath) {
+			if (filePath == null)
+				throw new ArgumentNullException(nameof(filePath));
+			if (!File.Exists(filePath))
+				throw new FileNotFoundException($"Could not find file \"{filePath}\"!");
 
 			IntPtr hModule = IntPtr.Zero;
 			try {
 				hModule = Kernel32.LoadLibraryEx(
-					fileName,
+					filePath,
 					IntPtr.Zero,
 					LoadLibraryExFlags.DontResolveDllReferences | LoadLibraryExFlags.LoadLibraryAsDatafile);
-					//LoadLibraryExFlags.LoadLibraryAsDatafileExclusive | LoadLibraryExFlags.LoadLibraryAsImageResource);
-				if (hModule == IntPtr.Zero)
-					throw new Win32Exception();
-
-				LoadFrom(hModule);
+				if (hModule == IntPtr.Zero) {
+					throw new ResourceIOException($"Failed to load resource {this.IdPair} from \"{filePath}\"!",
+						new Win32Exception());
+				}
+				try {
+					LoadFrom(hModule);
+				} catch (ResourceIOException ex) {
+					throw new ResourceIOException($"Failed to load resource {this.IdPair} from \"{filePath}\"!",
+						ex.InnerException);
+				}
 			} finally {
 				if (hModule != IntPtr.Zero)
 					Kernel32.FreeLibrary(hModule);
@@ -399,26 +427,30 @@ namespace TriggersTools.Windows.Resources {
 			if (hModule == IntPtr.Zero)
 				throw new ArgumentNullException(nameof(hModule));
 
-			using (var typeId = Type.GetPtr())
-			using (var nameId = Name.GetPtr())
-				hRes = Kernel32.FindResourceEx(hModule, typeId, nameId, Language);
-			if (hRes == IntPtr.Zero)
-				throw new Win32Exception();
+			try {
+				using (var typeId = Type.GetPtr())
+				using (var nameId = Name.GetPtr())
+					hRes = Kernel32.FindResourceEx(hModule, typeId, nameId, Language);
+				if (hRes == IntPtr.Zero)
+					throw new Win32Exception();
 
-			hGlobal = Kernel32.LoadResource(hModule, hRes);
-			if (hGlobal == IntPtr.Zero)
-				throw new Win32Exception();
+				hGlobal = Kernel32.LoadResource(hModule, hRes);
+				if (hGlobal == IntPtr.Zero)
+					throw new Win32Exception();
 
-			lpRes = Kernel32.LockResource(hGlobal);
-			if (lpRes == IntPtr.Zero)
-				throw new Win32Exception();
+				lpRes = Kernel32.LockResource(hGlobal);
+				if (lpRes == IntPtr.Zero)
+					throw new Win32Exception();
 
-			int size = Kernel32.SizeofResource(hModule, hRes);
-			if (size == 0)
-				throw new Win32Exception();
+				int size = Kernel32.SizeofResource(hModule, hRes);
+				if (size == 0)
+					throw new Win32Exception();
 
-			using (var ms = new UnmanagedMemoryStream((byte*) lpRes.ToPointer(), size)) {
-				Read(hModule, ms);
+				using (var ms = new UnmanagedMemoryStream((byte*) lpRes.ToPointer(), size)) {
+					Read(hModule, ms);
+				}
+			} catch (Exception ex) {
+				throw new ResourceIOException($"Failed to load resource {this.IdPair} from {hModule}!", ex);
 			}
 		}
 
@@ -435,8 +467,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		private void Update(IntPtr hUpdate, bool delete) {
 			if (hUpdate == IntPtr.Zero)
@@ -446,23 +478,26 @@ namespace TriggersTools.Windows.Resources {
 				byte[] data = (delete ? null : ToBytes());
 				int length = (data == null ? 0 : data.Length);
 				if (!Kernel32.UpdateResource(hUpdate, typeId, nameId, Language, data, length))
-					throw new Win32Exception();
+					throw new ResourceIOException($"An error occurred while saving {this.IdPair}!", new Win32Exception());
 			}
 		}
 		/// <summary>
 		///  Updates the resource to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="delete">True if the resource should be deleted.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> is null.
+		///  <paramref name="filePath"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		private void Update(string fileName, bool delete) {
-			Update(fileName, delete, new[] { this });
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		private void Update(string filePath, bool delete) {
+			Update(filePath, delete, new[] { this });
 		}
 		/// <summary>
 		///  Updates all resources to the update handle of the module.
@@ -474,8 +509,8 @@ namespace TriggersTools.Windows.Resources {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="hUpdate"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
 		/// </exception>
 		private static void Update(IntPtr hUpdate, bool delete, IEnumerable<Resource> resources) {
 			if (resources == null)
@@ -487,27 +522,36 @@ namespace TriggersTools.Windows.Resources {
 		/// <summary>
 		///  Updates all resources to the module file.
 		/// </summary>
-		/// <param name="fileName">The module file name.</param>
+		/// <param name="filePath">The module file name.</param>
 		/// <param name="delete">True if the resource should be deleted.</param>
 		/// <param name="resources">The resources to update.</param>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="fileName"/> or <paramref name="resources"/> is null.
+		///  <paramref name="filePath"/> or <paramref name="resources"/> is null.
 		/// </exception>
-		/// <exception cref="Win32Exception">
-		///  A native error occurred.
+		/// <exception cref="FileNotFoundException">
+		///  <paramref name="filePath"/> does not exist.
 		/// </exception>
-		private static void Update(string fileName, bool delete, IEnumerable<Resource> resources) {
-			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
-			IntPtr hUpdate = Kernel32.BeginUpdateResource(fileName, false);
-			if (hUpdate == IntPtr.Zero)
-				throw new Win32Exception();
+		/// <exception cref="ResourceIOException">
+		///  A resource IO exception occurred.
+		/// </exception>
+		private static void Update(string filePath, bool delete, IEnumerable<Resource> resources) {
+			if (filePath == null)
+				throw new ArgumentNullException(nameof(filePath));
+			if (!File.Exists(filePath))
+				throw new FileNotFoundException($"Could not find file \"{filePath}\"!");
+			IntPtr hUpdate = Kernel32.BeginUpdateResource(filePath, false);
+			if (hUpdate == IntPtr.Zero) {
+				throw new ResourceIOException($"An error occurred while beginning update for \"{filePath}\"!",
+					new Win32Exception());
+			}
 
 			Update(hUpdate, delete, resources);
 
-			if (!Kernel32.EndUpdateResource(hUpdate, false))
-				throw new Win32Exception();
+			if (!Kernel32.EndUpdateResource(hUpdate, false)) {
+				throw new ResourceIOException($"An error occurred while ending update for \"{filePath}\"!",
+					new Win32Exception());
+			}
 		}
 
 		#endregion
@@ -515,10 +559,10 @@ namespace TriggersTools.Windows.Resources {
 		#region ToString Override
 
 		/// <summary>
-		///  Gets the string representation of the resource.
+		///  Gets the string representation of the resource's Id.
 		/// </summary>
-		/// <returns>The string representation of the resource.</returns>
-		public override string ToString() => $"{TypeName} : {Name} : {Language}";
+		/// <returns>The string representation of the resource's Id.</returns>
+		public override string ToString() => $"{IdPair}";
 
 		#endregion
 	}
